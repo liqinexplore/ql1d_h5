@@ -1,0 +1,407 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="foundation.min.js"></script>
+</head>
+<body style="margin:0px !important;">
+
+<div class="container">
+    <div id="info-html" style="
+    padding-bottom: 100px;
+    margin-bottom: 100px;
+"></div>
+    <script type="text/x-handlebars-template" id="info">
+        <div class="order-info">
+            <div class="order-productname">{{brandname}}</div>
+            <div class="row order-info-inner">
+                <div class="column small-3" id="toDetails"
+                     style="background-image:url({{pic}}) !important;    background-size: cover;    background-repeat: no-repeat;    background-position: center;    padding: 0;    width: 25%;    height: 80px;    height: 25vw;">
+                </div>
+                <div class="column small-9">
+                    <div id="goodText">{{productname}}</div>
+                    <!--订单号只有在支付为false且是普通商品时隐藏-->
+                  {{#equals type
+                        1}}{{#isnotnull orderid}}<div style="height: 28px;line-height: 28px;color: #f66;">订单号：{{orderid}} </div>{{/isnotnull}}{{/equals}}
+
+                    <div>
+                        <!--按钮只有在普通商品时显示-->
+                        <div class="columns small-12 no-padding count-part">
+                            <div class="small-3 columns" style="padding: 0px;padding-top: 8px;">数量：</div>
+                            <div class="small-9 columns "
+                                 style="padding: 0px;float:left;padding:0px;{{#equals is_panicbuying 1}}width: 37px;{{else}}width: 37px;{{/equals}}border: 1px solid #aaa;">
+                                {{#equals is_panicbuying 1}}{{else}}
+                                {{#equals ispay 2}}{{!1.已付款；2.未付款}}
+                                <!--订单页面不可以修改商品件数
+                                <div id="icon_minus"></div>-->
+                                {{/equals}}{{/equals}}<input
+                                    readOnly="true" id="buyCountText" type="tel" type="tel"
+                                    style=" line-height: 1.4rem; width: 2.2rem;text-align: center;height: 34px;float: left; border: 0px;box-shadow: none;outline: none;"
+                                    value="{{count}}" {{#equals is_panicbuying 1}} readonly {{/equals}}
+                                {{#equals ispay 1}}{{!1.已付款；2.未付款}} readonly {{/equals}}/>
+                                {{#equals is_panicbuying 1}}{{else}}
+                                {{#equals ispay 2}}{{!1.已付款；2.未付款}}
+                                <!--订单页面不可以修改商品件数
+                                <div id="icon_add"></div>-->
+                                {{/equals}}{{/equals}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="order-info-items">
+            {{#equals type 2}}
+            <div class="horiz" for="phonenum">
+                <div class="small-4 columns text-center" for="phonenum"
+                     style="background-image:url(order-form-phone.png)">
+                    手&nbsp;机&nbsp;号:
+                </div>
+                <div class="small-8 columns"><input type="tel" id="phonenum" maxlength="11" {{#equals ispay 1}} readonly {{/equals}}
+                    placeholder="请输入您的联系电话！" value="{{tel}}"/>
+                </div>
+            </div>
+            {{#equals ispay 1}}{{!只有付款后的虚拟商品有兑换码}}
+            <div class="horiz">
+                <div class="small-3 columns text-center" style="background-image:url(order-form-barcode.png)">
+                    兑换码
+                </div>
+                <div class="small-9 columns">
+                    <input type="tel" id="virtualcode" placeholder="" value="{{virtualcode}}" readonly/>
+                </div>
+            </div>
+            {{/equals}}
+            <div class="horiz" style="height:auto;">
+                <div class="small-12 columns" style="padding-left:0;padding-top: 10px;height: 5.5rem;">
+                    <span class="remarktext" >备注：</span>
+                    <span class="textareatext"style="padding: 0px;width: 80%;"><textarea id='note' type="text" placeholder="请填写必要的备注信息" {{#equals ispay 1}} readonly {{/equals}}>{{remarks}}</textarea></span>
+
+                </div>
+            </div>
+            {{else}}
+            <div class="horiz">
+                <div class="small-4 columns text-center" style="background-image:url(order-form-name.png)">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名:
+                </div>
+                <div class="small-8 columns">
+                    <input type="text" id="username" placeholder="请输入您的姓名" {{#equals ispay 1}} readonly {{/equals}}
+                    value="{{username}}"/>
+                </div>
+            </div>
+            <div class="horiz">
+                <div class="small-4 columns text-center" style="background-image:url(order-form-phone.png)">手&nbsp;机&nbsp;号:
+                </div>
+                <div class="small-8 columns">
+                    <input type="tel" id="phonenum" placeholder="请输入您的联系电话" maxlength="11" {{#equals ispay 1}} readonly {{/equals}}
+                    value="{{tel}}"/>
+                </div>
+            </div>
+            <div class="horiz">
+                <div class="small-4 columns text-center" style="background-image:url(order-form-location.png)">地&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;址:
+                </div>
+                <div class="small-8 columns">
+                    <input type="text" id="address" placeholder="请输入您的地址" {{#equals ispay 1}} readonly {{/equals}}
+                    placeholder="" value="{{address}}"/>
+                </div>
+            </div>
+            <div class="horiz">
+                <div class="small-4 columns text-center" style="background-image:url(order-form-postcode.png)">
+                    邮&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;编:
+                </div>
+                <div class="small-8 columns">
+                    <input type="tel" id="zipcode" placeholder="请输入您的邮编" {{#equals ispay 1}} readonly {{/equals}}
+                    placeholder="" value="{{post}}"/>
+                </div>
+            </div>
+            {{/equals}}
+        </div>
+        {{#equals ispay 2}}{{!1.已付款；2.未付款}}
+        <div class="paylist">
+            &nbsp;
+            <!--请选择您的支付方式：-->
+        </div>
+        <div class="order-payment">
+            <a class="row order-payment-row  {{#equals payTypeIndex 0}}order-pay-selected{{/equals}}"
+                href="javascript:paytype(0)">
+                <div class="columns small-2"><img src="wechat.png"/></div>
+                <div class="columns small-10">微信支付</div>
+            </a>
+            <a class="row order-payment-row {{#equals payTypeIndex 1}}order-pay-selected{{/equals}}"
+               href="javascript:paytype(1)">
+                <div class="columns small-2"><img src="alipay.png"/></div>
+                <div class="columns small-10">支付宝支付</div>
+            </a>
+        </div>
+        <div class="columns small-12 no-padding total-info">
+            <span style="float:left">共<span id="total_count" style="color: #FF3743;">1</span>件商品</span><span>单价：￥{{price}}</span><span
+                style="float:right;">合计：<span
+                id="total_balance" style="color: #FF3743;">{{price}}</span>元</span>
+
+        </div>
+        <div class="row text-center">
+            <a class="button alert radius"
+               style="width: 90%;margin-top: 20px;background-color: #FE3842; height: 2.5rem;line-height: 0.8rem;border-radius: 6px;"
+               href="javascript:payment()">支付</a>
+        </div>
+        {{/equals}}
+
+
+        <div class="small-12 columns text-center" style="font-size:0.9rem;">
+            <span>客服电话：</span><a href="tel:+0531-85193842">0531-85193842</a>
+        </div>
+        <div id="alertphone" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>请输入正确的手机号</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertpay" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>请选择您的支付方式</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertaddress" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>您忘记填地址了哦</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertname" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>请告诉我们您的大名哦</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertzipcode" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>请告诉我们您的邮编地址哦</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alerterrzipcode" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>邮编格式不正确</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertnote" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>备注不能超过200</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+    </script>
+</div>
+
+<script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="handlebars-helpers.js"></script>
+<script>
+    var _bridge = null, obj = null, payTypeIndex = 0, buyCount = 1, isPayment = false;
+    //    function payment(orderid, price, count)//以前方式在客户端计算好总价传递
+    function payment() {
+        if (isPayment == true) {
+            return false;
+        }
+//        function paytype(type) {
+//            payTypeIndex = type;
+//            $(".order-payment-row").removeClass("order-pay-selected");
+//            $(".order-payment-row").eq(type).addClass("order-pay-selected");
+//        }
+
+        var phonenum = $("#phonenum").val(), username = $("#username").val(), address = $("#address").val(), zipcode = $("#zipcode").val(), note = $("#note").val();
+        var telReg = !!phonenum.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
+        if (telReg == false || !!phonenum == false) {
+            $("#alertphone").foundation('reveal', 'open');
+            return false;
+        }
+        if(obj.type!=1&&note.length>200){
+            $("#alertnote").foundation('reveal', 'open');
+            return false;
+        }
+        if (payTypeIndex === "") {
+            $("#alertpay").foundation('reveal', 'open');
+            return false;
+        }
+        if (obj.type != 2 && (address === "" || !!address == false)) {
+            $("#alertaddress").foundation('reveal', 'open');
+            return false;
+        }
+        if (obj.type != 2 && (username === "" || !!username == false)) {
+            $("#alertname").foundation('reveal', 'open');
+            return false;
+        }
+        if (obj.type != 2 && (zipcode === "" || !!zipcode == false)) {
+            $("#alertzipcode").foundation('reveal', 'open');
+            return false;
+        }
+        if (obj.type != 2 && !((/^[0-9]\d{5}(?!\d)$/).test(zipcode))) {
+            $("#alerterrzipcode").foundation('reveal', 'open');
+            return false;
+        }
+//        抢购/购买商品时一律不记录用户信息
+//        try {
+//            window.localStorage.setItem("qlyd_phonenum", phonenum);
+//            window.localStorage.setItem("qlyd_username", username);
+//            window.localStorage.setItem("qlyd_address", address);
+//            window.localStorage.setItem("qlyd_zipcode", zipcode);
+//            window.localStorage.setItem("qlyd_note", note);
+//            window.localStorage.setItem("qlyd_payTypeIndex", payTypeIndex);
+//        } catch (e) {
+//            //android 部分手机不支持此功能
+//        }
+        _bridge.callHandler('paymentNow', {
+            'paymentTypeIndex': payTypeIndex,
+//            'allprice': parseInt(obj.price) * parseInt(buyCount),
+            'virtualcode': "",
+            'orderid': obj.orderid || '',
+            'productid': obj.productid || '',
+            'is_panicbuying': obj.is_panicbuying,
+            'count': buyCount,
+            'price': obj.price,
+            'phonenum': phonenum,
+            'username': !!username == false ? "" : username,
+            'address': !!address == false ? "" : address,
+            'zipcode': !!zipcode == false ? "" : zipcode,
+            'note': !!note == false ? "" : note
+        }, function (response) {//JavaScript调用方法，app支付
+            isPayment = true;
+        });
+    }
+    function paytype(type) {
+        payTypeIndex = type;
+        $(".order-payment-row").removeClass("order-pay-selected");
+        $(".order-payment-row").eq(type).addClass("order-pay-selected");
+    }
+    $(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+        renderPage({
+            "brandname": "测试品牌01",
+            "ordernum": "201512142000023",
+            "username": "",
+            "original": "2",
+            "remarks": "",
+            "type": "2",
+            "productname": "正在抢购济南虚拟收费商品01",
+            "address": "",
+            "pic": "http://image.qiluyidian.mobi/1449912673808.png",
+            "orderid": "6359",
+            "is_panicbuying": "1",
+            "price": "0.01",
+            "virtualcode": "",
+            "count": "1",
+            "post": "",
+            "ispay": "2",
+            "productid": "1507",
+            "tel": "15806679259",
+            "payTypeIndex":0
+        });
+
+        function toDecimal2(x) {
+            var f = parseFloat(x);
+            if (isNaN(f)) {
+                return false;
+            }
+            var f = Math.round(x * 100) / 100;
+            var s = f.toString();
+            var rs = s.indexOf('.');
+            if (rs < 0) {
+                rs = s.length;
+                s += '.';
+            }
+            while (s.length <= rs + 2) {
+                s += '0';
+            }
+            return s;
+        }
+
+        function genBuyInfo() {
+            //共<span id="total_count">1</span>件商品，单价：￥{{price}}，合计：<span id="total_balance">100</span>元
+            $("#buyCountText").val(buyCount);
+            $("#total_count").text(buyCount);
+            $("#total_balance").text(toDecimal2(buyCount * obj.price));
+        }
+
+        function bindEvent() {
+            $("#buyCountText").on("input", function () {
+                var text = parseInt($(this).val());
+                buyCount = text;
+                if (isNaN(text) || text === 0) {
+                    $(this).val(1);//输入错误值选中文本框
+                    $(this).get(0).focus();
+                    $(this).get(0).setSelectionRange(0, 9999);
+                    buyCount = 1;
+                } else if (text > parseInt(obj.left_num)) {
+                    buyCount = text.toString().substr(0, text.toString().length - 1);
+                    $(this).val(buyCount);
+                }
+                genBuyInfo();
+            });
+            $("#toDetails,#goodText").on("click", function () {
+                //alert("需要相关参数跳转到商品详情页");
+                if (obj.original == 2) {//只有从“我的”标签页进入才可以点击跳转
+//                    在抢购页跳转到订单页时，也能点击跳转，在订单页为我们的参数是original==2,可以跳转。在不是订单页给我们的参数为1，不可以跳转。
+                    _bridge.callHandler('toDetails', {
+                        'productid': obj.productid
+                    }, function (response) {
+                    });
+                }
+            });
+            $("#icon_minus").on("click", function () {
+                if (buyCount - 1 > 0) {
+                    buyCount--;
+                    genBuyInfo();
+                }
+            });
+            $("#icon_add").on("click", function () {
+                if (buyCount < obj.left_num) {
+                    buyCount++;
+                    genBuyInfo();
+                }
+            });
+        }
+
+        function renderPage(message) {
+            obj = message;
+//              alert("obj内容"+JSON.stringify(obj));
+            var infoTmpl = Handlebars.compile($("#info").html());
+            $('#info-html').html(infoTmpl(obj));
+            buyCount = obj.count || 1;
+            genBuyInfo();
+            bindEvent();
+        }
+
+        function getItem(name) {
+            if (localStorage.getItem(name) === null || localStorage.getItem(name) == "undefined") {
+                return "";
+            } else {
+                return localStorage.getItem(name);
+            }
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+            bridge.init(function (message, responseCallback) {
+                var message = JSON.parse(message);
+//                 alert("message内容"+JSON.stringify(message));
+//                 alert("qlyd_note内容"+JSON.stringify(getItem("qlyd_note")));
+//抢购/购买商品时一律不记录用户信息
+//                try {
+//                    message.tel = !!(message.tel) == true ? message.tel : getItem("qlyd_phonenum");
+//                    message.username = !!(message.username) == true ? message.username : getItem("qlyd_username");
+//                    message.address = !!(message.address) == true ? message.address : getItem("qlyd_address");
+//                    message.post = !!(message.post) == true ? message.post : getItem("qlyd_zipcode");
+//                    message.remarks = !!(message.remarks) == true ? message.remarks : getItem("qlyd_note");
+//                    message.virtualcode = !!(message.virtualcode) == true ? message.virtualcode : getItem("qlyd_virtualcode");
+//                    message.payTypeIndex = !!(message.payTypeIndex) == true ? message.payTypeIndex : getItem("qlyd_payTypeIndex");
+//                } catch (e) {
+//                    //android 部分手机不支持此功能
+//                }
+                message.payTypeIndex = 0;
+                renderPage(message);
+                responseCallback({});
+            });
+        });
+    });
+</script>
+</body>
+</html>

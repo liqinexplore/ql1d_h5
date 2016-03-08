@@ -1,0 +1,132 @@
+.jw-icon { font-family: 'jw-icons'; -webkit-font-smoothing: antialiased; font-style: normal; font-weight: normal; text-transform: none; background-color: transparent; font-variant: normal; -webkit-font-feature-settings: "liga"; -moz-font-feature-settings: "liga=1"; -moz-font-feature-settings: "liga"; -ms-font-feature-settings: "liga" 1; -o-font-feature-settings: "liga"; font-feature-settings: "liga"; -moz-osx-font-smoothing: grayscale }
+
+.jw-skin-custom-audio { border-radius: 5px; }
+
+.jw-skin-custom-audio .jw-aspect { padding-top: 60px !important; }
+
+.jw-skin-custom-audio .jw-title-primary { width: 100% !important; }
+
+.jw-skin-custom-audio .jw-title { display: block !important; }
+
+.jw-skin-custom-audio .jw-preview { display: block !important;     background-size: cover!important;}
+
+.jw-skin-custom-audio .jw-icon-fullscreen { display: none !important; }
+
+.jw-skin-custom-audio .jw-display-icon-container { display: none !important; }
+
+.jw-skin-custom-audio .jw-title { display: none !important; }
+
+.jw-state-playing .jw-knob { box-shadow: 0 0 10px 5px #FFF !important; }
+
+.jw-skin-custom-audio .jw-background-color { background:rgba(0,0,0,0) }
+
+.jw-skin-custom-audio .jw-controlbar { border-top: #333 1px solid; height: 2.5em; display: block !important; border-top: #333 1px solid;
+    height: 4rem;
+    display: block !important;
+    padding-top: 0.8rem; font-size: 20px;
+    background-color:rgba(0,0,0,0.2)
+}
+
+.jw-skin-custom-audio .jw-group { vertical-align: middle }
+
+.jw-skin-custom-audio .jw-playlist { background-color: rgba(0, 0, 0, 0.5) }
+
+.jw-skin-custom-audio .jw-playlist-container { left: -43%; background-color: rgba(0, 0, 0, 0.5) }
+
+.jw-skin-custom-audio .jw-playlist-container .jw-option { border-bottom: 1px solid #444 }
+
+.jw-skin-custom-audio .jw-playlist-container .jw-option:hover, .jw-skin-custom-audio .jw-playlist-container .jw-option.jw-active-option { background-color: black }
+
+.jw-skin-custom-audio .jw-playlist-container .jw-option:hover .jw-label { color: #FF0046 }
+
+.jw-skin-custom-audio .jw-playlist-container .jw-icon-playlist { margin-left: 0 }
+
+.jw-skin-custom-audio .jw-playlist-container .jw-label .jw-icon-play { color: #FF0046 }
+
+.jw-skin-custom-audio .jw-playlist-container .jw-label .jw-icon-play:before { padding-left: 0 }
+
+.jw-skin-custom-audio .jw-tooltip-title { background-color: #000; color: #FFF }
+
+.jw-skin-custom-audio .jw-text { color: #FFF }
+
+.jw-skin-custom-audio .jw-button-color { color: #FFF }
+
+.jw-skin-custom-audio .jw-button-color:hover { color: #FF0046 }
+
+.jw-skin-custom-audio .jw-toggle { color: #FF0046 }
+
+.jw-skin-custom-audio .jw-toggle.jw-off { color: #FFF }
+
+.jw-skin-custom-audio .jw-controlbar .jw-icon:before, .jw-skin-custom-audio .jw-text-elapsed, .jw-skin-custom-audio .jw-text-duration { padding: 0 .5em; }
+
+.jw-skin-custom-audio .jw-controlbar .jw-icon-prev:before { padding-right: .25em }
+
+.jw-skin-custom-audio .jw-controlbar .jw-icon-playlist:before { padding: 0 .45em }
+
+.jw-skin-custom-audio .jw-controlbar .jw-icon-next:before { padding-left: .25em }
+
+.jw-skin-custom-audio .jw-icon-prev, .jw-skin-custom-audio .jw-icon-next { font-size: .7em }
+
+.jw-skin-custom-audio .jw-icon-prev:before { border-left: 1px solid #666 }
+
+.jw-skin-custom-audio .jw-icon-next:before { border-right: 1px solid #666 }
+
+.jw-skin-custom-audio .jw-icon-display { color: #FFF }
+
+.jw-skin-custom-audio .jw-icon-display:before { padding-left: 0 }
+
+.jw-skin-custom-audio .jw-display-icon-container { border-radius: 50%; border: 1px solid #333; display: none; }
+
+.jw-skin-custom-audio .jw-rail { background-color: #384154; box-shadow: none }
+
+.jw-skin-custom-audio .jw-buffer { background-color: #BF600E }
+
+.jw-skin-custom-audio .jw-progress { background: #fff }
+
+.jw-skin-custom-audio .jw-knob { width: .6em; height: .6em; background-color: #FFF; box-shadow: 0 0 0 1px #fff; border-radius: 1em }
+
+.jw-skin-custom-audio .jw-slider-horizontal .jw-slider-container { height: .95em }
+
+.jw-skin-custom-audio .jw-slider-horizontal .jw-rail, .jw-skin-custom-audio .jw-slider-horizontal .jw-buffer, .jw-skin-custom-audio .jw-slider-horizontal .jw-progress { height: .2em; border-radius: 0 }
+
+.jw-skin-custom-audio .jw-slider-horizontal .jw-knob { top: -0.19999999999999998em }
+
+.jw-skin-custom-audio .jw-slider-horizontal .jw-cue { top: -0.04999999999999999em; width: .3em; height: .3em; background-color: #FFF; border-radius: 50% }
+
+.jw-skin-custom-audio .jw-slider-vertical .jw-rail, .jw-skin-custom-audio .jw-slider-vertical .jw-buffer, .jw-skin-custom-audio .jw-slider-vertical .jw-progress { width: .2em }
+
+.jw-skin-custom-audio .jw-volume-tip { width: 100%; left: -45%; padding-bottom: .7em }
+
+.jw-skin-custom-audio .jw-text-duration { color: #666F82 }
+
+.jw-skin-custom-audio .jw-controlbar-right-group .jw-icon-tooltip:before, .jw-skin-custom-audio .jw-controlbar-right-group .jw-icon-inline:before { border-left: 1px solid #666 }
+
+.jw-skin-custom-audio .jw-controlbar-right-group .jw-icon-inline:first-child:before { border: 0 }
+
+.jw-skin-custom-audio .jw-dock .jw-dock-button { border-radius: 50%; border: 1px solid #333 }
+
+.jw-skin-custom-audio .jw-dock .jw-overlay { border-radius: 2.5em }
+
+.jw-skin-custom-audio .jw-icon-tooltip .jw-active-option { background-color: #FF0046; color: #FFF }
+
+.jw-skin-custom-audio .jw-icon-volume { min-width: 2.6em }
+
+.jw-skin-custom-audio .jw-time-tip, .jw-skin-custom-audio .jw-menu, .jw-skin-custom-audio .jw-volume-tip, .jw-skin-custom-audio .jw-skip { border: 1px solid #333 }
+
+.jw-skin-custom-audio .jw-time-tip { padding: .2em; bottom: 1.3em }
+
+.jw-skin-custom-audio .jw-menu, .jw-skin-custom-audio .jw-volume-tip { bottom: .24em }
+
+.jw-skin-custom-audio .jw-skip { padding: .4em; border-radius: 1.75em }
+
+.jw-skin-custom-audio .jw-skip .jw-text, .jw-skin-custom-audio .jw-skip .jw-icon-inline { color: #FFF; line-height: 1.75em }
+
+.jw-skin-custom-audio .jw-skip.jw-skippable:hover .jw-text, .jw-skin-custom-audio .jw-skip.jw-skippable:hover .jw-icon-inline { color: #FF0046 }
+
+.jw-skin-custom-audio.jw-flag-touch .jw-controlbar .jw-icon:before, .jw-skin-custom-audio.jw-flag-touch .jw-text-elapsed, .jw-skin-custom-audio.jw-flag-touch .jw-text-duration { padding: 0 .35em }
+
+.jw-skin-custom-audio.jw-flag-touch .jw-controlbar .jw-icon-prev:before { padding: 0 .125em 0 .7em }
+
+.jw-skin-custom-audio.jw-flag-touch .jw-controlbar .jw-icon-next:before { padding: 0 .7em 0 .125em }
+
+.jw-skin-custom-audio.jw-flag-touch .jw-controlbar .jw-icon-playlist:before { padding: 0 .225em }

@@ -1,0 +1,248 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="foundation.min.js"></script>
+</head>
+<body style="margin:0px !important;">
+
+<div class="container">
+    <div id="info-html" style="
+    padding-bottom: 100px;
+    margin-bottom: 100px;
+"></div>
+    <script type="text/x-handlebars-template" id="info">
+        <div class="order-info">
+            <div class="order-productname">{{brandname}}</div>
+            <div class="row order-info-inner">
+                <div class="column small-3" style="padding-left:0px !important;">
+                    <img src="{{pic}}"/>
+                </div>
+                <div class="column small-9">
+                    <div>{{productname}}</div>
+                    <div style="
+    height: 36px;
+    line-height: 36px;
+">订单号：{{orderid}}
+                    </div>
+                    <div style="color:#f66">
+                        <div class="columns small-6 no-padding">￥{{price}}</div>
+                        <div class="columns small-6 text-right no-padding">X{{count}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="order-info-items">
+            {{#equals type 2}}
+            <div class="prefix-zone">
+                <div class="small-3 columns text-center">
+                    <span class="prefix">手机</span>
+                </div>
+                <div class="small-9 columns">
+                    <input type="tel" id="phonenum" placeholder="" value="{{tel}}"/>
+                </div>
+            </div>
+            <!--<div class="prefix-zone">-->
+            <!--<div class="small-3 columns text-center">-->
+            <!--<span class="prefix">兑换码</span>-->
+            <!--</div>-->
+            <!--<div class="small-9 columns">-->
+            <!--<input type="tel" id="virtualcode" placeholder="" value="{{virtualcode}}"/>-->
+            <!--</div>-->
+            <!--</div>-->
+            <div class=" prefix-zone">
+                <div class="small-3 columns text-center">
+                    <span class="prefix">备注</span>
+                </div>
+                <div class="small-9 columns">
+                    <textarea id='note' type="text" placeholder="" value="{{remarks}}"/>
+                </div>
+            </div>
+            {{else}}
+            <div class="prefix-zone">
+                <div class="small-3 columns text-center">
+                    <span class="prefix">姓名</span>
+                </div>
+                <div class="small-9 columns">
+                    <input type="text" id="username" placeholder="" value="{{username}}"/>
+                </div>
+            </div>
+            <div class="prefix-zone">
+                <div class="small-3 columns text-center">
+                    <span class="prefix">手机</span>
+                </div>
+                <div class="small-9 columns">
+                    <input type="tel" id="phonenum" placeholder="" value="{{tel}}"/>
+                </div>
+            </div>
+            <div class="prefix-zone">
+                <div class="small-3 columns text-center">
+                    <span class="prefix">地址</span>
+                </div>
+                <div class="small-9 columns">
+                    <input type="text" id="address" placeholder="" value="{{address}}"/>
+                </div>
+            </div>
+            <div class=" prefix-zone">
+                <div class="small-3 columns text-center">
+                    <span class="prefix">邮编</span>
+                </div>
+                <div class="small-9 columns">
+                    <input type="tel" id="zipcode" placeholder="" value="{{post}}"/>
+                </div>
+            </div>
+            {{/equals}}
+        </div>
+        <div class="pay-choice">
+            请选择您的支付方式：
+        </div>
+        <div class="order-payment">
+            <a class="row order-payment-row {{#equals payTypeIndex 0}}order-pay-selected{{/equals}}"
+               href="javascript:paytype(0)" >
+                <div class="columns small-2"><img src="wechat.png"/></div>
+                <div class="columns small-10">微信支付</div>
+            </a>
+            <a class="row order-payment-row order-pay-selected"
+               href="javascript:paytype(1)">
+                <div class="columns small-2"><img src="alipay.png"/></div>
+                <div class="columns small-10">支付宝支付</div>
+            </a>
+        </div>
+        <div class="row text-center">
+            <a class="button alert radius" style="width: 90%; margin-top: 20px;background-color:#f66"
+               href="javascript:payment({{orderid}},{{price}},{{count}})">支付</a>
+        </div>
+        <div id="alertphone" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>请输入正确的手机号</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertpay" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>请选择您的支付方式</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertaddress" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>您忘记填地址了哦</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+    </script>
+</div>
+
+<script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="handlebars-helpers.js"></script>
+<script>
+    var _bridge = null, payTypeIndex = 1, goodsType = 0;
+    function payment(orderid, price, count) {
+        var phonenum = $("#phonenum").val(), username = $("#username").val(), address = $("#address").val(), zipcode = $("#zipcode").val(), note = $("#note").val();
+        var telReg = !!phonenum.match(/^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/);
+        if (telReg == false || !!phonenum == false) {
+            $("#alertphone").foundation('reveal', 'open');
+            return false;
+        }
+        if (payTypeIndex === "") {
+            $("#alertpay").foundation('reveal', 'open');
+            return false;
+        }
+        if (goodsType != 2 && (address === "" || !!address == false)) {
+            $("#alertaddress").foundation('reveal', 'open');
+            return false;
+        }
+        try {
+            window.localStorage.setItem("qlyd_phonenum", phonenum);
+            window.localStorage.setItem("qlyd_username", username);
+            window.localStorage.setItem("qlyd_address", address);
+            window.localStorage.setItem("qlyd_zipcode", zipcode);
+            window.localStorage.setItem("qlyd_note", note);
+            window.localStorage.setItem("qlyd_payTypeIndex", payTypeIndex);
+        } catch (e) {
+            //android 部分手机不支持此功能
+        }
+        _bridge.callHandler('paymentNow', {
+            'paymentTypeIndex': payTypeIndex,
+            'phonenum': phonenum,
+            'allprice': parseInt(price) * parseInt(count),
+            'orderid': orderid,
+            'username': !!username == false ? "" : username,
+            'address': !!address == false ? "" : address,
+            'zipcode': !!zipcode == false ? "" : zipcode,
+            'virtualcode': "",
+            'note': !!note == false ? "" : note
+        }, function (response) {//JavaScript调用方法，app支付
+        });
+    }
+    function paytype(type) {
+        payTypeIndex = type;
+        $(".order-payment-row").removeClass("order-pay-selected");
+        $(".order-payment-row").eq(type).addClass("order-pay-selected");
+    }
+    $(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+//        renderPage({
+//            "rc": "0", "des": "", "data": {
+//                "orderid": "1",
+//                "productid": "1",
+//                "brandname": "品牌",
+//                "productname": "品牌名称",
+//                "pic": "https://ss3.bdstatic.com/lPoZeXSm1A5BphGlnYG/skin/122.jpg",
+//                "price": "60",
+//                "count": "1",
+//                "type": "2",
+//                "ordernum": "1",
+//                "tel": "1232",
+//                "address": "高新区",
+//                "post": "fsgdsgad",
+//                "remarks": "1232",
+//                "username": "姓名"
+//            }
+//        });
+
+        function renderPage(message) {
+            goodsType = message.data.type;
+            var infoTmpl = Handlebars.compile($("#info").html());
+            $('#info-html').html(infoTmpl(message.data));
+        }
+
+        function getItem(name) {
+            if (localStorage.getItem(name) === null || localStorage.getItem(name) == "undefined") {
+                return "";
+            } else {
+                return localStorage.getItem(name);
+            }
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+            bridge.init(function (message, responseCallback) {
+                var message = JSON.parse(message);
+                try {
+                    message.data.tel = !!(message.data.tel) == true ? message.data.tel : getItem("qlyd_phonenum");
+                    message.data.username = !!(message.data.username) == true ? message.data.username : getItem("qlyd_username");
+                    message.data.address = !!(message.data.address) == true ? message.data.address : getItem("qlyd_address");
+                    message.data.post = !!(message.data.post) == true ? message.data.post : getItem("qlyd_zipcode");
+                    message.data.remarks = !!(message.data.remarks) == true ? message.data.remarks : getItem("qlyd_note");
+                    message.data.virtualcode = !!(message.data.virtualcode) == true ? message.data.virtualcode : getItem("qlyd_virtualcode");
+                    message.data.payTypeIndex = !!(message.data.payTypeIndex) == true ? message.data.payTypeIndex : getItem("qlyd_payTypeIndex");
+                } catch (e) {
+                    //android 部分手机不支持此功能
+                }
+                renderPage(message);
+                responseCallback({});
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <script type="text/javascript" src="jquery.js"></script>
+    <style>.title {
+        width: 100%;
+        font-size: 20px;
+        text-align: center;
+    }</style>
+</head>
+<body style="margin:0!important;">
+<div class="container" style="background-color: #f6f6f6">
+    <div id="info-html" style="    padding-bottom: 100px;"></div>
+    <script type="text/x-handlebars-template" id="info">
+        <div class="title"style="height:40px; line-height:40px;">{{title}}</div>
+        <p><img src="{{headimg}}"/></p>
+        <div class="content" style="margin:10px;">{{{content}}}</div>
+    </script>
+</div>
+
+<script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="handlebars-helpers.js"></script>
+<script>
+    var _bridge = null;
+    $(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+//        renderPage({"rc":"0","des":"","data":{"title":"解放军仪仗队女兵冒雨彩排阅兵","headimg":"https://ss3.baidu.com/-fo3dSag_xI4khGko9WTAnF6hhy/super/whfpf%3D425%2C260%2C50/sign=016cbef1402309f7e73afe52143338c1/83025aafa40f4bfbb5cb3531054f78f0f73618bf.jpg",
+//            "source": "sds",
+//            "publishtime": "2015",
+//            "content": "为确保纪念中国人民抗日战争暨世界反法西斯战争胜利70周年大会的顺利进行，现场磨合纪念大会各项组织工作，自8月22日夜间至23日上午，在天安门地区及长安街沿线进行了纪念大会专项演练。图为女兵冒雨演练。"
+//        }
+//        });
+        function renderPage(message) {
+            var infoTmpl = Handlebars.compile($("#info").html());
+            $('#info-html').html(infoTmpl(message.data));
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+            bridge.init(function (message, responseCallback) {
+                renderPage(JSON.parse(message));
+                var data = {'Javascript Responds': 'Wee!'};
+                responseCallback(data);
+            });
+        });
+    });</script>
+</div>
+</body>
+</html>

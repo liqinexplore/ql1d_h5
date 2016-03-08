@@ -1,0 +1,354 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <script type="text/javascript" src="jquery.js"></script>
+    <link rel="stylesheet" href="foundation.min.css"/>
+</head>
+<body style="margin: 0px !important;">
+<div class="container">
+    <div id="list-info-html" style="    padding-bottom: 100px;"></div>
+    <style>
+        .jw-controls {
+            pointer-events: none;
+            display: -webkit-box;
+            -webkit-box-pack: center;
+            -webkit-box-align: center;
+        }
+
+        .jw-display-icon-container {
+            position: initial;
+            top: inherit;
+        }
+
+        a {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none; /* Disable selection/copy in UIWebView */
+        }
+
+        #list-info-html > div { margin: 0 10px; }
+    </style>
+    <script type="text/x-handlebars-template" id="list-info">
+
+        <div id="title">{{title}}</div>
+        <div id="extension">
+            <div>{{!1、城市；2.频道；3.订阅号}}{{#equals ownertype 3}}<span style="color:#F66">{{ownername}}</span>{{else}}{{channelname}}{{/equals}}
+            </div>
+            <div>{{publishtime}}</div>
+        </div>
+        <div id="content">
+            {{#existsIn2 videourl headimg}}
+            <div class="row text-center" style="margin-bottom: 15px;">
+                {{#if videourl}}
+                <div id="qlwbvideo" data-magellan-expedition="fixed"
+                     class="columns small-12 medium-12 large-12 text-center"></div>
+                {{else}}{{! 图片新闻 }}
+                <image src="{{headimg}}" class="columns small-12 medium-12 large-12 headimg"></image>
+                {{/if}}
+            </div>
+            {{/existsIn2}}
+            <div style="word-wrap:break-word;">
+                {{{newsContent content}}}
+            </div>
+        </div>
+        <!--<div id="hline"></div>-->
+        {{#isnotnull recommendReads}}
+        <div id="recommended" class="recommended">
+            <div><span></span><span>推荐阅读</span></div>
+            <ul>{{#each recommendReads}}
+                <li onclick="news({{news_id}},{{news_type}})"><span>&nbsp;&nbsp;</span><a href="javascript:void(0)"
+                                                                                          class="pageLink">{{title}}</a>
+                </li>
+                {{/each}}
+            </ul>
+        </div>
+        {{/isnotnull}}
+        <div id="thumb">
+            <div><a onclick="thumbup()" class="pageLink" href="javascript:void(0);">{{praisecount}}</a></div>
+        </div>
+        <div class="redirect">{{!1、城市；2.频道；3.订阅号}}
+            {{#equals ownertype 3}}
+            <div><span class="ownerNameAvatar"
+                       style="background-image:url({{channelimg}}?imageView2/1/w/34/h/34)"></span>
+                <a class="pageLink"
+                   style=" width: 50%; float: left; position: absolute; z-index: 90; padding:0 10px"
+                   onclick='redirectToOwner({{ownerid}},"{{ownername}}")'>{{ownername}}</a>
+                <a class="pageLink"
+                   onclick='toggleOwnerFavorite({{ownerid}})'
+                   id="toggleOwnerFavorite"
+                   data-isubscribe="{{isubscribe}}"
+                   style="float: right;border-left:1px solid #989898;padding-left:10px;width: 70px;text-align: center;">
+                    {{#equals isubscribe 1 }}-&nbsp;已订阅{{else}}<span style="color:#ff3742;font-weight:bold;">+&nbsp;订阅</span>{{/equals}}</a>
+            </div>
+            {{else}}
+            <div><a class="pageLink" onclick='redirect({{channelid}})'
+                    style="display: inline-block;    width: 100%;">点击进入{{channelname}}频道<span
+                    style="float: right;width: 24px;"><img
+                    src="arraw-right-radius.png"/></span></a></div>
+            {{/equals}}
+        </div>
+    </script>
+</div>
+
+<script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="handlebars-helpers.js"></script>
+<script type="text/javascript" src="jwplayer.js" charset="utf-8"></script>
+<script>
+    jwplayer.key = "H8YuTH/6ydsAJ/19lK84NpM8yVdT7HEuq0hmLAg1sE0=";
+    var _bridge = null, playerInstance = null;
+    function pause() {
+        if (!!playerInstance) {
+            var status = playerInstance.getState();//state值：1.playing播放中 2.paused停止 3.idle空闲 4.completed结束
+            if (status == "playing" || status == "buffering") {
+                playerInstance.pause();
+            }
+        }
+    }
+    function fullscreen(status) {
+        _bridge.callHandler('fullscreen', {'status': status}, function (response) {//JavaScript调用方法
+        });
+    }
+    function redirectToOwner(ownerid, ownername) {
+        _bridge.callHandler('redirectToOwner', {'ownerid': ownerid, 'ownername': ownername}, function (response) {//JavaScript调用方法
+        });
+    }
+    function redirect(channelid) {
+        _bridge.callHandler('redirect', {'channelid': channelid}, function (response) {//JavaScript调用方法
+        });
+    }
+    function toggleOwnerFavorite(ownerid) {
+        _bridge.callHandler('toggleOwnerFavorite', {
+            'isubscribe': $("#toggleOwnerFavorite").attr("data-isubscribe"),
+            'ownerid': ownerid
+        }, function (response) {//JavaScript调用方法
+            response = JSON.parse(response)
+            if (response.status == "1") {//操作成功
+                if ($("#toggleOwnerFavorite").attr("data-isubscribe") == 1) {//原是已订阅
+                    $("#toggleOwnerFavorite").html("<span style='color:#ff3742;font-weight:bold;'>+&nbsp;订阅</span>");
+                    $("#toggleOwnerFavorite").attr("data-isubscribe", 2);
+                } else {
+                    $("#toggleOwnerFavorite").html("-&nbsp;已订阅");
+                    $("#toggleOwnerFavorite").attr("data-isubscribe", 1);
+                }
+            }
+        });
+    }
+    function thumbup() {
+        if ($("#thumb").find("a").hasClass("thumb-up") == false) {
+            _bridge.callHandler('thumbUp', {'action': "add"}, function (response) {//JavaScript调用方法
+                response = JSON.parse(response)
+                if (response.status == "1") {//操作成功
+                    $("#thumb").find("a").addClass("thumb-up");
+                    var count = $("#thumb a");
+                    count.html(parseInt(count.html()) + 1);
+                }
+            });
+        }
+    }
+    function news(id, type) {
+        _bridge.callHandler('news', {'id': id, "type": type}, function (response) {//JavaScript调用方法
+        });
+    }
+    function zoomIn(index) {
+        $("#content p").attr({"class": "zoomIn-" + index});
+    }
+    function zoomOut(index) {
+        $("#content p").attr({"class": "zoomOut-" + index});
+    }
+    function quitFull() {//退出全屏
+        if (!!playerInstance) {
+            var status = playerInstance.getFullscreen();
+            if (status) {
+                playerInstance.setFullscreen(!status);
+            }
+        }
+    }
+//    renderPage({
+//        "des": "",
+//        "fontsize": "0",
+//        "data": {
+//            "channelid": "1",
+//            "channelimg": "http://image.qlwbyidian.com/o_19vfpoibufqd187st931f6419kui.jpg",
+//            "channelname": "推荐",
+//            "commentcount": "0",
+//            "content": "<p>I didn’t mean to drink the maker movement Kool-Aid. It happened by mistake. I was swept away by how impressive Maker Media is, and how it’s succeeded by taking the opposite route from other media enterprises.<\/p><p>Today Maker Media is a multipurpose machine. The company publishes a number of magazines and books each year, have a robust web presence, a large YouTube presence, and sell products online on Maker Shed. And they host Maker Faires, festivals that celebrate the “DIY mindset,” showcased through art, electronics, and craft projects. The first was held in 2006. There are now 151 worldwide.<\/p><p>redirect(redirect) 的ownerid改成了ownerid，之前用的是channelid，执行此方法进入该频道<\/p><p>新加的bridge方法addOwnerFavorite的参数channelid对应接口返回的channelid，执行此方法订阅该订阅号<\/p>\n",
+//            "credits": "0",
+//            "headimg": "",
+//            "iscollect": "2",
+//            "isubscribe": "1",
+//            "newsComments": [],
+//            "ownerid": "1",
+//            "ownername": "推荐",//频道名
+//            "ownertype": "2",//新闻所属频道号或订阅号的类别。1、城市；2.频道；3.订阅号
+//            "praisecount": "1",
+//            "videourl": "http://image.qlwbyidian.com/o_1a71ka1bj11p9vtdjs51b26fvkn.mp4",
+//            "publishtime": "2016-01-06 14:40:21",
+//            "recommendReads": [{"news_id": "26555", "news_type": "2", "title": "昨晚敲完字早晨就直接去上课了"}
+//                , {"news_id": "26551", "news_type": "1", "title": "下课后我同学在微信上跟我说在知乎上看到了一个id疑似是我"}
+//                , {"news_id": "26552", "news_type": "2", "title": "然后发现已经过了千赞（捂脸）"}
+//                , {"news_id": "26553", "news_type": "3", "title": "一直以来的知乎小透明突然收到这么多赞真的很开心"}
+//                , {"news_id": "26554", "news_type": "1", "title": "发图邀请“来吃酸菜鱼啊”"}],
+//            "share_url": "http://www.ql1d.com/news/show/source/app/id/27568.html",
+//            "show_top": "0",
+//            "source": "--",
+//            "title": "测试数据----"
+//        },
+//        "rc": 0
+//    });
+    function renderPage(message) {
+        var listInfoTmpl = Handlebars.compile($("#list-info").html());
+        $('#list-info-html').html(listInfoTmpl(message.data));
+        console.log(message.data);
+        try {
+            if (message.hasOwnProperty('fontsize')) {
+                $("#content p").attr({"class": "fontSize-" + message.fontsize});
+            }
+
+            if (!!message.data.videourl == true) {
+                var couldBeControl = true;
+                try {
+                    if (message.data.videoControlBar == "false") {
+                        couldBeControl = false;
+                    }
+                }
+                catch (e) {
+                    couldBeControl = true;
+                }
+                var skin = (function (url) {//mov,webm,mp4,mp3,m4a,ogg
+                    var name = "seven";
+                    var reg = new RegExp("^((?!(mp3|m4a|ogg)).)*$");
+                    if (!reg.test(url)) {
+                        name = "custom-audio";
+                    }
+                    return name;
+                })(message.data.videourl);
+                console.log(skin);
+
+                playerInstance = jwplayer('qlwbvideo');
+                console.log("playerInstance");
+                playerInstance.setup({
+                    width: "100%",
+                    aspectratio: "4:3",
+                    file: message.data.videourl,
+                    image: (function (i) {
+                        if (i == "seven") {
+                            return message.data.videourl + "?vframe/jpg/offset/1";
+                        } else {
+                            return "audio_player_skin_1.jpg";//(Math.floor(Math.random() * 4) + 1 ):get random int between 1 and 6
+                        }
+                    })(skin),
+                    title: message.data.title,
+//                    controls: couldBeControl,
+//                    autostart: true,
+//                    autoplay:true,
+                    skin: {
+                        url: "jw-skin-" + skin + ".css",
+                        name: skin
+                    },
+                    events: {
+                        onFullscreen: function (obj) {
+                            console.log("onFullscreen" + obj.fullscreen);
+                            if (!!obj.fullscreen == true) {
+                                fullscreen("1");
+                            }
+                            else {
+                                fullscreen("0");
+                            }
+                        }
+                    }
+                }).onReady(function () {
+                    console.log("onReady");
+                    $(".jwfullscreen,.jw-icon-fullscreen").css("z-index", (couldBeControl == true ? "100000" : "-1"));
+                });
+            }
+
+            console.log("div[poster]");
+            $("div[poster]").each(function (i) {
+                var id = $(this).attr("id"), src = $(this).find("source").attr('src');
+                console.log(id);
+                console.log(src);
+                if (!id || !src) {
+                    return false;
+                }
+                jwplayer(id).setup({
+                    width: "100%",
+                    aspectratio: "4:3",
+                    file: src,
+                    image: src + "?vframe/jpg/offset/1",
+                    events: {
+                        onFullscreen: function (obj) {
+                            if (!!obj.fullscreen == true) {
+                                fullscreen("1");
+                            }
+                            else {
+                                fullscreen("0");
+                            }
+                        },
+                        onReady: function () {
+                            $("#" + id).show();
+                        }
+                    }
+                });
+            });
+        } catch (e) {
+            console.log("exception:");
+            console.log(e);
+        }
+
+        setTimeout(function () {
+            var images = document.getElementsByTagName("img"), imageList = [];
+            for (i = 0; i < images.length; i++) {
+                var src = images[i].src;//http://image.qiluyidian.mobi/1448847254786.jpg-contentimage
+                if (src.lastIndexOf("image.qlwbyidian.com") < 0 && src.lastIndexOf("image.qlwbyidian.mobi") < 0 && src.lastIndexOf("image.qiluyidian.mobi") < 0) {
+                    continue;
+                }
+                imageList.push(images[i].src);
+                images[i].onclick = function () {
+                    var list = JSON.stringify(imageList);
+                    var src = this.src;
+                    var index = (function () {
+                        var _j = 0;
+                        for (var _i = 0; _i < imageList.length; _i++) {
+                            if (src == imageList[_i]) {
+                                _j = _i;
+                            }
+                        }
+                        return _j;
+                    })();
+                    _bridge.callHandler('images', {'list': list, "index": index}, function (response) {//JavaScript调用方法
+                    });
+                }
+            }
+        }, 500);
+    }
+
+    $(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+
+            bridge.init(function (message, responseCallback) {
+                renderPage(JSON.parse(message));
+                var data = {'Javascript Responds': 'Wee!'};
+                responseCallback(data);
+                bridge.registerHandler('pause', function (data, responseCallback) {
+                    pause();
+                })
+
+            });
+        });
+    });
+</script>
+</body>
+</html>

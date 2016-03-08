@@ -1,0 +1,177 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <script type="text/javascript" src="jquery.js"></script>
+</head>
+<body style="margin: 0px!important;">
+<div class="container">
+    <div id="list-info-html"></div>
+    <script type="text/x-handlebars-template" id="list-info">
+        <div class="shopping">
+            <div class="detailPic"><img src="{{topimg}}"></div>
+
+            <div class="row">
+                <div class="column small-6 medium-6 large-6" style="margin-top: 10px;padding-left: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;"><span class="now-price">¥{{ceil currentprice}}元</span>
+                    <span class="more-info"><del>{{oldprice}}元</del></span>
+                </div>
+                <div class="column small-6 medium-6 large-6 ">
+                    <button style="background-color:#FE3842;font-size: 12px; float:right; margin:0px;"
+                            class="button radius alert shop-button {{#equals is_panicbuying 1}}
+                    {{#isNowBeforeTime beginstamp}}disable{{else}}{{#isNowAfterTime endstamp}}disable{{else}}{{#equals leftcount 0}}disable{{else}}{{#equals isbuy 1}}disable{{/equals}}{{/equals}}{{/isNowAfterTime}}{{/isNowBeforeTime}}{{else}}{{#equals leftcount 0}}disable{{/equals}}{{/equals}}"
+                            {{#equals is_panicbuying 1}}{{#isNowBeforeTime beginstamp}} disabled {{else}}{{#isNowAfterTime endstamp}} disabled {{else}}{{#equals leftcount 0}} disabled {{else}}{{#equals isbuy 1}} disabled {{/equals}}{{/equals}}{{/isNowAfterTime}}{{/isNowBeforeTime}}{{else}}{{#equals leftcount 0}} disabled {{/equals}}{{/equals}}
+                     {{#equals isbuy 1}}{{#equals is_panicbuying 1}}{{else}}onclick="pay({{id}})"{{/equals}}{{else}}onclick="pay({{id}})"{{/equals}}>
+                    {{#equals is_panicbuying 1}}
+                    {{#isNowBeforeTime beginstamp}}
+                    暂未开始
+                    {{else}}
+                    {{#isNowAfterTime endstamp}}
+                    已经结束
+                    {{else}}
+                    {{#equals leftcount 0}}
+                    已经抢光
+                    {{else}}
+                    {{#equals isbuy 1}}
+                    您已参加
+                    {{else}}
+                    立即抢购
+                    {{/equals}}
+                    {{/equals}}
+                    {{/isNowAfterTime}}
+                    {{/isNowBeforeTime}}
+                    {{else}}
+                    {{#equals leftcount 0}}
+                    暂时缺货
+                    {{else}}
+                    立即购买
+                    {{/equals}}
+                    {{/equals}}
+                    </button>
+                </div>
+            </div>
+            <div class="row productname inline-ellipsis">{{productname}}</div>
+            <div class="row count">
+                <div class="column small-6 medium-6 large-6" style="
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;">剩余数量 <span style="color:#FE3842;">{{leftcount}}</span>件
+                </div>
+                <div class="column small-6 medium-6 large-6" style="
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;"><span style="float:right;">共<span style="color:#FE3842;">{{goodscount}}</span>件</span>
+                </div>
+            </div>
+
+        </div>
+        <div class="row evaluate">
+            <div class="column small-7 medium-7 large-7 startall" style="
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;">
+                {{{starshow start size}}}   <span style="color:#FFB401"> {{start}}分</span>
+            </div>
+            <div class="column small-5 medium-5 large-5" style="
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;">
+                <span id="toevaluate" style="">300条评价></span>
+            </div>
+        </div>
+        <div class="goods-details">
+            <div class="goods-details-title">
+                <div>商品详情</div>
+             </div>
+            {{#each imglist}}
+            <p class="detailPic"><img src="{{url}}" onclick="imageview({{@index}})"></p>
+            {{/each}}
+            <div class="intro">
+                <div>商品描述</div>
+                <div style="padding-bottom:100px;">{{{intro}}}</div>
+            </div>
+        </div>
+    </script>
+</div>
+
+<script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="handlebars-helpers.js"></script>
+<script>
+    var _bridge = null;
+    function pay(id) {//购买
+        $(".shop-button").attr({"disabled": ""});//重置为不可点
+        _bridge.callHandler('buy', {'id': id}, function (response) {//JavaScript调用方法
+        });
+    }
+    function imageview(index) {//show gallery by ios
+        _bridge.callHandler('image', {'index': index}, function (response) {//JavaScript调用方法
+        });
+    }
+    $(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+        renderPage({
+            "des" : "",
+            "rc" : "0",
+            "data" : {
+                "id" : "1220",
+                "currentprice" : "25.00",
+                "endstamp" : "1481534460000",
+                "intro" : "<p>抢购说明：<\/p>\n\n<p>逢山天然蜂蜜450g 惊爆价25元\/罐<\/p>\n\n<p>抢购流程：<\/p>\n\n<p>进入抢购页面，输入手机号码后直接点击支付即可，抢购成功后请妥善保管兑换码，使用时需提交手机号码和兑换码<\/p>\n\n<p><img src=\"http:\/\/image.qlwbyidian.com\/o_1a1dlhur214r3t3l8pm1bd41ba51m.jpg\" \/><\/p>\n\n<p><img src=\"http:\/\/image.qlwbyidian.com\/o_1a1dlhur23s01edd1dhemc31qod1n.jpg\" \/><\/p>\n\n<p><img src=\"http:\/\/image.qlwbyidian.com\/o_1a1dlhur29sl1b021c6s14t4i2h1o.jpg\" \/><\/p>\n\n<p>商家介绍：<\/p>\n\n<p>青州市逄山蜜蜂园有限公司前身为青州市汇友蜂业有限公司本着研究蜜蜂、造福人类、以信为本、以质取胜的宗旨，为了不辜负广大消费者的厚爱，逄山蜂业人将一如既往像小蜜蜂那样，不知辛劳地为人们酿造甜蜜、酿造健康。<\/p>\n\n<p>合作社位于逄山风景区，区内生态环境优美，蜜源植物丰富。青州市王坟镇是全国首批生态建设示范镇，境内有仰天山国家森林公园、明衡王墓、黄巢洞等许多景点。该镇蜂群存养量3万余群，养蜂从业人员近千余名，是山东省养蜂技术培训基地，也是江北养蜂第一大镇。<\/p>\n\n<p>合作社依仗优美的自然生态环境，丰富的蜜源和庞大的养蜂团队，立足以蜂农为核心，抱团闯市场，实行&ldquo;统一产品标准，统一管理，优质优价，分红返利&rdquo;的蜂场管理办法。建立蜂农档案和原料溯源卡管理制度，以生产原生态成熟蜜为主，全面推动蜂产品质量升级，带动蜂农共同致富。目前合作社已成为很有影响力的蜂产品原料供应商。2014年努力创建全国示范合作社。<\/p>\n\n<p><span style=\"color:#FF0000\">购买后领取地点：济南历下区泺源大街6号<!--EndFragment-->山东新闻大厦9层<\/span><\/p>\n\n<p><span style=\"color:#FF0000\">工作时间：9:00-17:00<\/span><\/p>\n\n<p>&nbsp;<\/p>\n\n<p>&nbsp;<\/p>\n",
+                "oldprice" : "50.00",
+                "imglist" : [
+                    {
+                        "imgid" : "",
+                        "url" : ""
+                    }
+                ],
+                "productname" : "逢山天然蜂蜜450g 惊爆价25元\/罐",
+                "type" : "1",
+                "isbuy" : "1",
+                "goodscount" : "45",
+                "start":"3.5",
+                "leftcount" : "44",
+                "is_panicbuying" : "1",
+                "topimg" : "http:\/\/image.qlwbyidian.com\/o_1a1dkrc7ro4hnop3gt1j0dpb5u.jpg-contentimage",
+                "beginstamp" : "1444712400000"
+            }
+        });
+        function bntEvent(){
+          $("#toevaluate").on("click",function(){
+              _bridge.callHandler('toevaluate', {
+                  'goodsid': obj.id
+              }, function (response) {
+              });
+          });
+        };
+        function renderPage(message) {
+            var listInfoTmpl = Handlebars.compile($("#list-info").html());
+            $('#list-info-html').html(listInfoTmpl(message.data));
+            bntEvent();
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+
+            bridge.init(function (message, responseCallback) {
+                renderPage(JSON.parse(message));
+                var data = {'Javascript Responds': 'Wee!'};
+                responseCallback(data);
+            });
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="foundation.min.js"></script>
+</head>
+<body style="margin:0px !important;">
+
+<div class="container">
+    <div id="info-html"></div>
+    <script type="text/x-handlebars-template" id="info">
+        <div class="order-info-items" style="margin-top:0;">
+            <div class="small-12 columns" style="    line-height: 4rem;">
+                <span class="prefix">订报时长</span>
+            </div>
+            <div id="bookingDuration" class="small-12 columns ">
+                {{#each this}}
+                <div>
+                    <label for="checkbox{{@index}}" class="small-9 columns" style="border-left:0px;">{{kind}}</label>
+                    <div class="small-3 columns text-center" style="height:4rem;">
+                        <input id="checkbox{{@index}}" type="radio" class="radio" name="name"
+                               {{#equals @index 0}}checked{{/equals}}
+                               style="    min-height: 2.5rem;
+    width: 20px;
+    line-height: 4rem;
+    text-align: center;
+    margin-top: 10px;float:right;">
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+        <div class="pay-choice text-center">
+            合计：<span id="price" style="color:#f66">5</span><span style="color:#f66">元</span>
+        </div>
+        <div class="order-payment">
+            <div class="row order-payment-row" style="display:none">
+                <div class="columns small-2"><img src="wechat.png"/></div>
+                <div class="columns small-10">微信支付</div>
+            </div>
+            <div class="row order-payment-row order-pay-selected"><!--order-pay-selected自动选中-->
+                <div class="columns small-2"><img src="alipay.png"/></div>
+                <div class="columns small-10 ">支付宝支付</div>
+            </div>
+        </div>
+        <div class="row text-center">
+            <a class="button alert radius" style="width: 90%; margin-top: 20px;background-color:#f66;"
+               href="javascript:paybooking();">支付</a>
+        </div>
+        <div id="alert" class="reveal-modal" data-reveal aria-hidden="true" role="dialog"
+             style="min-height:18px;padding:16px;">
+            <div>请正确选择订报时长</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+        <div id="alertpay" class="reveal-modal" data-reveal aria-hidden="true" role="dialog">
+            <div>请选择您的支付方式</div>
+            <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+        </div>
+    </script>
+</div>
+
+<script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="handlebars-helpers.js"></script>
+<script>
+    var _bridge = null, index = 0, payIndex = 1, dataList = [{kind: "月刊", price: "5", months: "1"}, {
+        kind: "季刊",
+        price: "15",
+        months: "3"
+    }, {kind: "半年刊", price: "30", months: "6"}, {kind: "年刊", price: "50", months: "12"}];
+    function paybooking() {console.log(index);console.log(index == "");
+        if (index === "") {
+            $("#alert").foundation('reveal', 'open');
+            return false;
+        }
+        if (payIndex === "") {
+            $("#alertpay").foundation('reveal', 'open');
+            return false;
+        }
+        _bridge.callHandler('paybooking', {
+            "price": dataList[index].price,
+            "payIndex": payIndex,
+            "months": dataList[index].months
+        }, function (response) {//JavaScript调用方法，app支付
+        });
+    }
+    $(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+        renderPage(dataList);
+
+        function renderPage(message) {
+            var infoTmpl = Handlebars.compile($("#info").html());
+            $('#info-html').html(infoTmpl(message));
+            $(".radio").on("click", function () {
+                index = $(this).attr("id");
+                index = index.replace("checkbox", "");
+                $("#price").html(dataList[index].price);
+            });
+            $(".order-payment-row").on("click", function () {
+                payIndex = $(this).index();
+                $(".order-payment-row").removeClass("order-pay-selected");
+                $(this).addClass("order-pay-selected");
+            });
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+            bridge.init(function (message, responseCallback) {
+                responseCallback({'Javascript Responds': 'Wee!'});
+            });
+        });
+    });
+</script>
+</body>
+</html>

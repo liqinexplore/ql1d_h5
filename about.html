@@ -1,0 +1,64 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <style>.row {
+        font-size: 14px;
+        color: #adadad;
+        text-align: justify;
+        text-justify: inter-ideograph;
+    }</style>
+    <script type="text/javascript" src="jquery.js"></script>
+</head>
+<body style="    margin: 0px !important;">
+<div class="container" style="margin:0px;overflow:hidden;background-color: #f6f6f6">
+    <div class="row" style="padding:15px 10px 20px 10px;">
+        <p style="text-align:center;"><img src="logo.png" style="width:80px;height:80px;"/></p>
+
+        <div style="text-align:center;color:#000;font-size:16px;margin-bottom:10px;">齐鲁壹点</div>
+        <div style="text-align:center;font-size:16px;margin-bottom:20px;">版本号：<span id="version">4.5.0</span>
+        </div>
+
+        <p style="font-size: 12px; text-align:center">实时互动，个性推荐，最懂山东。</p>
+
+        <p style="font-size: 12px;">齐鲁壹点APP，生于齐鲁晚报，长在移动互联，由齐鲁晚报旗下山东日新传媒有限责任公司自主研发并独立运营。这里的新闻，在与用户互动中产生；这里的资讯，最快最准最本土，有用有趣有情怀；这里的阅读，千人千面，满足个性化需求；这里的活动，天天有惊喜，每日数十款产品限时抢；这里的壹点号，已成山东本土最大自媒体平台……齐鲁壹点APP，齐鲁晚报倾力打造，27年新闻专业主义，我们更懂新媒体。</p>
+
+    </div>
+    <div style="text-align:left;font-size:16px;background-image:url(service.png);background-repeat:no-repeat;background-position:40px center;background-size:30px;padding-left:80px;background-color: #d6d6d6;height:42px;line-height:42px;margin-bottom:16px;color:#adadad;">
+        客服电话：<a href="tel:+86-0531-85193842">0531-85193842</a>
+    </div>
+    <div style="text-align:left;font-size:16px;background-image:url(business.png);background-repeat:no-repeat;background-position:40px center;background-size:30px;padding-left:80px;background-color: #d6d6d6;height:42px;line-height:42px;margin-bottom:100px;color:#adadad;">
+        业务联系：<a href="javascript:void(0);">rxcm2015@163.com</a>
+    </div>
+</div>
+</div>
+<script>
+    var _bridge = null;
+    $(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+        function renderPage(message) {
+            document.getElementById("version").innerHTML = message.version;
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+
+            bridge.init(function (message, responseCallback) {
+                renderPage(JSON.parse(message));
+            });
+        });
+    });
+</script>
+</body>
+</html>

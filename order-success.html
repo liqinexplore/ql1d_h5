@@ -1,0 +1,53 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+
+</head>
+<body style="    margin: 0px !important;">
+<div class="container" style="margin:0px;height:100%;overflow:hidden;background-color: #f6f6f6">
+    <div class="row" style="height:100%;max-width:100%">
+        <div class="column small-12 medium-12 large-12" id="image"
+             style="background-image: url(payed-success.png);
+                        height:80%;
+                        background-size: 250px;
+                        background-origin: border-box;
+                        background-clip: border-box;
+                        background-position: 50% 50%;
+                        background-repeat: no-repeat;">
+        </div>
+        <div class="column small-12 medium-12 large-12"
+             style="height:20%;
+                        background-image: url(payed-border.png);
+                        background-clip: content-box;
+                        background-origin: border-box;
+                        background-position: center bottom;
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                        padding: 0px;">
+        </div>
+    </div>
+</div>
+<script>
+    function fixOnAndroid() {
+        document.getElementById("image").style.paddingTop = "500px";
+        document.getElementById("fotter").style.paddingTop = "200px";
+    }
+    var token, style, sheet, rule, image = document.getElementById("image");
+    style = document.createElement("style");
+    style.id = "sheet1";
+    document.head.appendChild(style);
+    sheet = style.sheet;
+    //创建一个名为scaleTo的keyframe（webkit需要前缀）
+    var token = window.WebKitCSSKeyframesRule ? "-webkit-" : "";
+    sheet.insertRule("@" + token + "keyframes scaleTo {" +
+            "0% {-webkit-transform: scale(1);-moz-transform: scale(1);-ms-transform: scale(1);-o-transform: scale(1);transform: scale(1);opacity:0.5;}" +
+            "100% {-webkit-transform: scale(1.2);-moz-transform: scale(1.2);-ms-transform: scale(1.2);-o-transform: scale(1.2);transform: scale(1.2);opacity:1;}" +
+            "}", 0);
+    scale = sheet.cssRules[0];
+    image.style.animation = image.style.WebkitAnimation = image.style.mozAnimation = image.style.oAnimation = "scaleTo 0.5s cubic-bezier(0.500, -0.100, 0.300, 3.000)";
+    image.style.animationFillMode = image.style.webkitAnimationFillMode = image.style.mozAnimationFillMode = image.style.oAnimationFillMode = "forwards";</script>
+</body>
+</html>

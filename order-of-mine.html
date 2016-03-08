@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="content.css"/>
+    <link rel="stylesheet" href="foundation.min.css"/>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="foundation.js"></script>
+    <script type="text/javascript" src="foundation.tab.js"></script>
+    <style>a:visited,a:active {color: #fff}</style>
+</head>
+<body style="margin:0px !important;">
+
+<div class="container">
+    <div id="info-html"></div>
+    <script type="text/x-handlebars-template" id="info">
+        <ul class="tabs" data-tab>
+            <li class="tab-title active"><a href="#panel1">已付款</a></li>
+            <li class="tab-title"><a href="#panel2">待付款</a></li>
+        </ul>
+        <div class="tabs-content">
+            <div class="content active" id="panel1">
+                <div>{{#isnotnull data.payed}}
+                    {{#each data.payed}}
+                    <div class="row order-info-inner" onclick="toOrderInfo({{orderid}})">
+                        <div class="column small-3 order-info-image" style="background-image:url({{pic}});background-origin: content-box;background-position: center;padding: 0px 0px 0px 10px;">
+                        </div>
+                        <div class="column small-9">
+                            <div>{{productname}}</div>
+                            <div class="orderid">订单号：{{orderid}}</div>
+                            <div style="color:#f66">
+                                <div class="columns small-6 no-padding">￥{{price}}x{{count}}</div>
+                                <div class="columns small-6 text-right no-padding">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                    {{else}}
+                    <p style="
+    text-align: center;
+    margin-top: 50%;
+"><img src="empty-cart.png" style="width: 40%;"/></p>
+                    {{/isnotnull}}
+                </div>
+            </div>
+            <div class="content" id="panel2">
+                <div>{{#isnotnull data.no_pay}}
+                    {{#each data.no_pay}}
+                    <div class="row order-info-inner" onclick="toOrderInfo({{orderid}})">
+                        <div class="column small-3 order-info-image" style="background-image:url({{pic}});background-origin: content-box;background-position: center;padding: 0px 0px 0px 10px;">
+                        </div>
+                        <div class="column small-9">
+                            <div>{{productname}}</div>
+                            <div class="orderid">订单号：{{orderid}}</div>
+                            <div style="color:#f66">
+                                <div class="columns small-6 no-padding">￥{{price}}x{{count}}</div>
+                                <div class="columns small-6 text-right no-padding">
+                                    <a class="btn-paynow" href="javascript:payonce({{orderid}});">立即付款</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                    {{else}}
+                    <p style="
+    text-align: center;
+    margin-top: 50%;
+"><img src="empty-cart.png" style="width: 40%;"/></p>
+                    {{/isnotnull}}
+                </div>
+            </div>
+        </div>
+    </script>
+</div>
+
+<script type="text/javascript" src="handlebars-v3.0.3.js"></script>
+<script type="text/javascript" src="handlebars-helpers.js"></script>
+<script>
+    var _bridge = null;
+
+    function payonce(orderid) {//立即支付，app跳转到order-payment.html并且给出参数初始化页面
+
+
+        _bridge.callHandler('paymentReady', {'orderid': orderid}, function (response) {//JavaScript调用方法
+        });
+    }
+    function toOrderInfo(orderid) {//查看订单详情，app跳转到order-info.html并且给出参数初始化页面
+        _bridge.callHandler('orderInfo', {'orderid': orderid}, function (response) {//JavaScript调用方法
+        });
+    }
+    $(document).ready(function () {
+        function connectWebViewJavascriptBridge(callback) {
+            if (window.WebViewJavascriptBridge) {
+                callback(WebViewJavascriptBridge);
+            } else {
+                document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                    callback(WebViewJavascriptBridge);
+                }, false);
+            }
+        }
+
+        renderPage({
+            "rc": "0", "des": "", "data": {
+                "payed": [],
+                "no_pay": [{
+                    "orderid": "3",
+                    "productid": "3",
+                    "brandname": "没有付款品牌",
+                    "productname": "aa",
+                    "pic": "payed-border.png",
+                    "price": "60",
+                    "count": "3",
+                    "ordernum": "123"
+                }, {
+                    "orderid": "1",
+                    "productid": "1",
+                    "brandname": "没有付款品牌",
+                    "productname": "aa",
+                    "pic": "test.png",
+                    "price": "60",
+                    "": "1",
+                    "ordernum": "123"
+                }]
+            }
+        });
+
+        function renderPage(message) {
+            var infoTmpl = Handlebars.compile($("#info").html());
+            $('#info-html').html(infoTmpl(message));
+            $(document).foundation();
+        }
+
+        connectWebViewJavascriptBridge(function (bridge) {
+            _bridge = bridge;
+            bridge.init(function (message, responseCallback) {
+                renderPage(JSON.parse(message));
+                var data = {'Javascript Responds': 'Wee!'};
+                responseCallback(data);
+            });
+        });
+    });
+</script>
+</body>
+</html>

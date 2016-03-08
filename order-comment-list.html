@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="content.css"/>
+    <script type="text/javascript" src="vue.min.js"></script>
+    <title>用户评价</title>
+    <style>
+        body { margin: 0 !important; background-color: #FFF !important; }
+
+        #container { display: none; }
+
+        .page_title { height: 40px; padding: 10px; line-height: 40px; font-size: 23px; background-color: #F6F6F6; }
+
+        .page_title img { margin: 0 3px; width: 25px; }
+
+        .page_title label { font-size: 18px; color: #FFB400; display: inline-block; margin-top: -3px; position: absolute; }
+
+        .item { margin: 20px 20px; border-bottom: 1px solid #AAAAAA; }
+
+        .user_avatar { width: 50px; height: 50px; overflow: hidden; border: 2px solid #4A4A4A; background-repeat: no-repeat; background-size: contain; background-position: center; background-clip: content-box; border-radius: 50%; float: left; }
+
+        .comment_info { height: 55px; color: #147FF0; font-size: 18px; padding-left: 70px; }
+
+        .comment_info span { color: #AAA; font-size: 14px; display: block; margin-top: 10px; }
+
+        .comment_info img { width: 14px; margin: 0 2px; }
+
+        .comment_context { margin: 10px 0; font-size: 16px; line-height: 20px; }
+
+        .line_ellipse_5 { -webkit-box-orient: vertical; -webkit-line-clamp: 5; -webkit-user-select: text; -moz-box-orient: vertical; -moz-line-clamp: 5; -moz-user-select: text; -ms-box-orient: vertical; -ms-line-clamp: 5; -ms-user-select: text; -o-box-orient: vertical; -o-line-clamp: 5; -o-user-select: text; box-orient: vertical; line-clamp: 5; user-select: text; box-sizing: border-box; display: -webkit-inline-box; overflow-x: hidden; overflow-y: hidden; text-overflow: ellipsis; }
+
+        .loadpage { text-align: center; color: #666666; background-color: #e6e6e6; height: 40px;font-size:14px;border-radius: 5px; line-height: 40px; margin: 0 10px 100px; }
+    </style>
+</head>
+<body>
+<div id="container">
+    <div class="page_title">总体评价：<span>{{{totalscore|showScore}}}</span><label>{{totalscore}}分</label></div>
+    <div v-for="item in commentlist" class="item">
+        <div class="user_avatar" v-bind:style="{backgroundImage:'url('+item.headimg+')'}"></div>
+        <div class="comment_info">
+            {{item.username}}<br/><span>{{{item.scorecount|showScore 'small'}}}{{item.timestr}}</span>
+        </div>
+        <div class="comment_context line_ellipse_5" v-on:click="toggleClass('line_ellipse_5',$index)">{{item.content}}
+        </div>
+    </div>
+    <div class="loadpage" v-on:click="loadPage">加载更多</div>
+</div>
+</body>
+<script>
+    var _bridge = null, pageNo = 0;
+    function connectWebViewJavascriptBridge(callback) {
+        if (window.WebViewJavascriptBridge) {
+            callback(WebViewJavascriptBridge);
+        } else {
+            document.addEventListener('WebViewJavascriptBridgeReady', function () {
+                callback(WebViewJavascriptBridge);
+            }, false);
+        }
+    }
+
+    connectWebViewJavascriptBridge(function (bridge) {
+        _bridge = bridge;
+
+        bridge.init(function (message, responseCallback) {
+            generateHtml(JSON.parse(message).data);
+        });
+    });
+    //    var a = {
+    //        "des": "",
+    //        "data": {
+    //            "commentlist": [
+    //                {
+    //                    "commentid": "9",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 11:10:27",
+    //                    "scorecount": "2",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                },
+    //                {
+    //                    "commentid": "8",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 11:06:29",
+    //                    "scorecount": "5",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                },
+    //                {
+    //                    "commentid": "7",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 11:05:28",
+    //                    "scorecount": "1",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                },
+    //                {
+    //                    "commentid": "6",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 11:02:31",
+    //                    "scorecount": "1",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                },
+    //                {
+    //                    "commentid": "4",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 10:37:23",
+    //                    "scorecount": "3",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                },
+    //                {
+    //                    "commentid": "3",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 10:37:14",
+    //                    "scorecount": "3",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                },
+    //                {
+    //                    "commentid": "2",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 10:36:57",
+    //                    "scorecount": "3",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                },
+    //                {
+    //                    "commentid": "1",
+    //                    "content": "商品评价测试",
+    //                    "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+    //                    "parent_id": "",
+    //                    "publishtime": "2016-03-07 10:36:24",
+    //                    "scorecount": "1",
+    //                    "timestr": "1天前",
+    //                    "username": "壹粉019663"
+    //                }
+    //            ],
+    //            "totalscore": "2.4"
+    //        },
+    //        "rc": 0
+    //    };
+    //    generateHtml(a.data);
+    function generateHtml(info) {
+        Vue.filter('showScore', function (value, size) {
+            size = size || 'big';
+            var h = ["<img src='star_" + size + "_empty.png'/>", "<img src='star_" + size + "_empty.png'/>", "<img src='star_" + size + "_empty.png'/>", "<img src='star_" + size + "_empty.png'/>", "<img src='star_" + size + "_empty.png'/>"];
+            for (var i = 0; i < value; i++) {
+                if (i + 1 > value) {
+                    h[i] = "<img src='star_" + size + "_half.png'/>";
+                } else {
+                    h[i] = "<img src='star_" + size + "_full.png'/>";
+                }
+            }
+            return h.join('');
+        })
+
+        new Vue({
+            el: '#container',
+            data: info,
+            methods: {
+                loadPage: function () {
+//                    var date = {
+//                        "commentlist": [
+//                            {
+//                                "commentid": "9",
+//                                "content": "商品评价测试!!!!!!!!!!!!!!!!",
+//                                "headimg": "http://image.qlwbyidian.com/huifutouxiang@2x.png",
+//                                "parent_id": "",
+//                                "publishtime": "2016-03-07 11:10:27",
+//                                "scorecount": "2",
+//                                "timestr": "1天前",
+//                                "username": "壹粉019663"
+//                            }
+//                        ],
+//                        "totalscore": "3.4"
+//                    };
+//                    this.commentlist = this.commentlist.concat(date.commentlist);
+//                    this.totalscore = date.totalscore;
+
+                    var that = this;
+                    _bridge.callHandler('loadOrderCommentListByPageIndex', {'pageNo': ++pageNo}, function (response) {//JavaScript调用方法
+                        response = JSON.parse(response)
+                        that.commentlist = that.commentlist.concat(response.date.commentlist);
+                        that.totalscore = response.date.totalscore;
+                    });
+                },
+                toggleClass: function (className, index) {
+                    var el = document.getElementsByClassName("comment_context")[index]
+                    if (el.className.lastIndexOf(className) >= 0) {
+                        el.className = "comment_context";
+                    }
+                    else {
+                        el.className = "comment_context line_ellipse_5";
+                    }
+                }
+            },
+            ready: function () {
+                document.getElementById("container").style.display = "block";
+            }
+        });
+    }
+</script>
+</html>
